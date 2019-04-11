@@ -1,6 +1,7 @@
 package edu.css.cis3334_unit12_firebase_2019;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,11 +29,18 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonCreateLogin;
     private Button buttonSignOut;
     private Button buttonStartChat;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
 
         textViewStatus = (TextView) findViewById(R.id.textViewStatus);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
@@ -34,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         buttonCreateLogin = (Button) findViewById(R.id.buttonCreateLogin);
         buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
         buttonStartChat = findViewById(R.id.buttonStartChat);
+        mAuth = FirebaseAuth.getInstance();
 
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -72,23 +89,86 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //updateUI(currentUser);
+        if (currentUser != null) {
+            // User is signed in
+            Log.d("CIS3334", "onAuthStateChanged:signed_in:" + currentUser.getUid());
+            Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_LONG).show();
+            textViewStatus.setText("Signed In");
+        } else {
+            // User is signed out
+            Log.d("CIS3334", "onAuthStateChanged:signed_out");
+            Toast.makeText(MainActivity.this, "User Signed Out", Toast.LENGTH_LONG).show();
+            textViewStatus.setText("Signed Out");
+        }
     }
 
     private void createAccount(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("CIS3334", "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                            textViewStatus.setText("Status: Logged in!");
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("CIS3334", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                            textViewStatus.setText("Status: Not logged in!");
+                        }
 
-        Toast.makeText(getApplicationContext(), "Create Account not implemented yet !!! ", Toast.LENGTH_LONG).show();
+                        // ...
+                    }
+                });
+        //Toast.makeText(getApplicationContext(), "Create Account not implemented yet !!! ", Toast.LENGTH_LONG).show();
 
     }
 
     private void signIn(String email, String password){
 
-        Toast.makeText(getApplicationContext(), "signIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
 
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("CIS3334", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("CIS3334", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
+        //Toast.makeText(getApplicationContext(), "signIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
     }
 
     private void signOut () {
-
-        Toast.makeText(getApplicationContext(), "signOut not implemented yet !!! ", Toast.LENGTH_LONG).show();
+        mAuth.signOut();
+        textViewStatus.setText("Signed Out");
+        //Toast.makeText(getApplicationContext(), "signOut not implemented yet !!! ", Toast.LENGTH_LONG).show();
 
     }
 
@@ -97,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Google SignIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
 
     }
-
 
 
 }
