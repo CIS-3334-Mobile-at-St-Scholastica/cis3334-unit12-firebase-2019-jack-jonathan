@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-        //Toast.makeText(getApplicationContext(), "Create Account not implemented yet !!! ", Toast.LENGTH_LONG).show();
     }
 
        /**
@@ -193,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-        //Toast.makeText(getApplicationContext(), "signIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
     }
 
        /**
@@ -203,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
     private void signOut () {
         mAuth.signOut();
         textViewStatus.setText("Signed Out");
-        //Toast.makeText(getApplicationContext(), "signOut not implemented yet !!! ", Toast.LENGTH_LONG).show();
     }
 
        /**
