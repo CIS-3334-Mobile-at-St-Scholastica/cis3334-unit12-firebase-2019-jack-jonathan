@@ -16,21 +16,26 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ChatActivity extends AppCompatActivity {
 
+    //Set variables
     Button btnPost;
     EditText etMessage;
     TextView tvMsgList;
     DatabaseReference myRef;
 
+  /**
+   * onCreate method to be run on creation of the program.
+   */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Find variables by their ID
         btnPost = findViewById(R.id.buttonPost);
         etMessage = findViewById(R.id.editTextMessage);
         tvMsgList = findViewById(R.id.textViewMsgList);
 
-        // Set up database reference
+        //Set up database reference
         myRef = FirebaseDatabase.getInstance().getReference("FireChat");
 
         myRef.addValueEventListener(new ValueEventListener() {
@@ -49,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                //Not implemented
             }
         });
 
@@ -66,7 +71,5 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 }
