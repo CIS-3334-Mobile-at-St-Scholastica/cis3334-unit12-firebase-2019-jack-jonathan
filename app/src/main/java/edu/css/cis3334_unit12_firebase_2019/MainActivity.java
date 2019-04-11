@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Set variables
     private TextView textViewStatus;
     private EditText editTextEmail;
     private EditText editTextPassword;
@@ -31,17 +32,21 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonStartChat;
     private FirebaseAuth mAuth;
 
+   /**
+   * onCreate method to be run on creation of the program.
+   */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Write a message to the database
+        //Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
 
         myRef.setValue("Hello, World!");
 
+        //Find variables by their ID
         textViewStatus = (TextView) findViewById(R.id.textViewStatus);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
@@ -52,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         buttonStartChat = findViewById(R.id.buttonStartChat);
         mAuth = FirebaseAuth.getInstance();
 
+        /**
+        * onClickListener for normal sign in
+        * @param v
+        */
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("CIS3334", "normal login ");
@@ -59,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /**
+        * onClickListener for creating an account
+        * @param v
+        */
         buttonCreateLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("CIS3334", "Create Account ");
@@ -66,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /**
+        * onClickListener for Google sign in
+        * @param v
+        */
         buttonGoogleLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("CIS3334", "Google login ");
@@ -73,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /**
+        * onClickListener for sign out
+        * @param v
+        */
         buttonSignOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("CIS3334", "Logging out - signOut ");
@@ -80,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /**
+        * onClickListener to start the activity
+        * @param v
+        */
         buttonStartChat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("CIS3334", "Starting Chat Intent ");
@@ -88,11 +113,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
+       /**
+        * onStart method to check and see if the user
+        * is currently signed in and updates accordingly.
+        */
     @Override
     public void onStart() {
         super.onStart();
@@ -112,6 +138,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+       /**
+        * createAccount method that takes in an email address and password, 
+        * validates them, and then creates a new user.
+        * @param email
+        * @param password
+        */
     private void createAccount(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -131,17 +163,18 @@ public class MainActivity extends AppCompatActivity {
                             //updateUI(null);
                             textViewStatus.setText("Status: Not logged in!");
                         }
-
-                        // ...
                     }
                 });
         //Toast.makeText(getApplicationContext(), "Create Account not implemented yet !!! ", Toast.LENGTH_LONG).show();
-
     }
 
+       /**
+        * signIn method that takes in an email address and password, 
+        * validates them, and then signs the user in.
+        * @param email
+        * @param password
+        */
     private void signIn(String email, String password){
-
-
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -158,25 +191,25 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             //updateUI(null);
                         }
-
-                        // ...
                     }
                 });
         //Toast.makeText(getApplicationContext(), "signIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
     }
 
+       /**
+        * signOut method that signs out the user 
+        * and sets the text to "Signed Out"
+        */
     private void signOut () {
         mAuth.signOut();
         textViewStatus.setText("Signed Out");
         //Toast.makeText(getApplicationContext(), "signOut not implemented yet !!! ", Toast.LENGTH_LONG).show();
-
     }
 
+       /**
+        * Sign in method for Google. Not implemented.
+        */
     private void googleSignIn() {
-
         Toast.makeText(getApplicationContext(), "Google SignIn not implemented yet !!! ", Toast.LENGTH_LONG).show();
-
     }
-
-
 }
